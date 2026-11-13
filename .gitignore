@@ -1,0 +1,9 @@
+# Local preview only — not part of the profile.
+preview.html
+
+# Source fonts, fetched by scripts/make_fonts.py. The subsets that matter are
+# already baked into scripts/fonts_inline.py, which IS committed.
+scripts/fonts/
+
+__pycache__/
+*.pyc
