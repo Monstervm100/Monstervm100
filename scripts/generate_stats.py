@@ -431,23 +431,7 @@ def draw_langs(by_bytes: Counter, by_repos: Counter) -> str:
     return "".join(s)
 
 
-def draw_heading(word: str) -> str:
-    """A section heading drawn as type plus a rule, not a markdown '##'."""
-    H = 28
-    size = 16
-    s = [head(H, weights=(600,))]
-    s.append(txt(INSET, 19, word, "e", size, 600))
-    x = INSET + text_width(word, size) + 16
-    s.append(f'<line x1="{x:.1f}" y1="13" x2="{W - INSET}" y2="13" '
-             f'class="r" stroke-width="1"/>')
-    s.append(TAIL)
-    return "".join(s)
-
-
 # ---------------------------------------------------------------------------
-
-HEADINGS = ["stats"]
-
 
 def main() -> None:
     today = dt.datetime.now(dt.timezone.utc).date()
@@ -478,8 +462,6 @@ def main() -> None:
     write("stats.svg", draw_stats(total, active, max(weekly, default=0), weekly))
     write("streak.svg", draw_streak(st))
     write("langs.svg", draw_langs(data["by_bytes"], data["by_repos"]))
-    for word in HEADINGS:
-        write(f"hd-{word}.svg", draw_heading(word))
 
 
 if __name__ == "__main__":
