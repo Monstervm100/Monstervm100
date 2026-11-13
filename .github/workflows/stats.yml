@@ -34,7 +34,7 @@ jobs:
 
       - name: Commit, but only if something moved
         run: |
-          FILES="stats.svg streak.svg langs.svg hd-about.svg hd-stats.svg"
+          FILES="stats.svg streak.svg langs.svg hd-stats.svg"
           if [ -z "$(git status --porcelain -- $FILES)" ]; then
             echo "nothing changed today"
             exit 0

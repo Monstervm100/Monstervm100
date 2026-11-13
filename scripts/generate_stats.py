@@ -446,7 +446,7 @@ def draw_heading(word: str) -> str:
 
 # ---------------------------------------------------------------------------
 
-HEADINGS = ["about", "stats"]
+HEADINGS = ["stats"]
 
 
 def main() -> None:
