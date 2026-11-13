@@ -49,7 +49,8 @@ ADVANCE = 0.600  # JetBrains Mono advance width, in em. Pins our text measuring.
 
 # The ramp the year chart is drawn with, densest last.
 RAMP = " :+#@"
-RAMP_CUTS = (0, 2, 5, 9)  # 0 -> " ", 1 -> ":", 2-4 -> "+", 5-8 -> "#", 9+ -> "@"
+# Upper bound of each step: n < cut picks that character.
+RAMP_CUTS = (1, 2, 5, 9)  # 0 -> " ", 1 -> ":", 2-4 -> "+", 5-8 -> "#", 9+ -> "@"
 
 
 def text_width(s: str, size: float) -> float:
