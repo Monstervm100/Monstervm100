@@ -48,10 +48,6 @@ FONT_STACK = 'JBM,ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",m
 ADVANCE = 0.600  # JetBrains Mono advance width, in em. Pins our text measuring.
 
 # The ramp the year chart is drawn with, densest last.
-RAMP = " :+#@"
-# Upper bound of each step: n < cut picks that character.
-RAMP_CUTS = (1, 2, 5, 9)  # 0 -> " ", 1 -> ":", 2-4 -> "+", 5-8 -> "#", 9+ -> "@"
-
 
 def text_width(s: str, size: float) -> float:
     return len(s) * size * ADVANCE
@@ -435,62 +431,6 @@ def draw_langs(by_bytes: Counter, by_repos: Counter) -> str:
     return "".join(s)
 
 
-def draw_year(cal: dict) -> str:
-    """The contribution calendar, drawn in characters instead of squares."""
-    H = 150
-    s = [head(H)]
-    size = 8.8
-    cw = size * ADVANCE
-    gutter = INSET + 26
-    line_h = 13
-    top_y = 34
-
-    weeks = cal["weeks"]
-    grid = [[None] * len(weeks) for _ in range(7)]
-    for w, week in enumerate(weeks):
-        for d in week["contributionDays"]:
-            grid[d["weekday"]][w] = d["contributionCount"]
-
-    def glyph(n):
-        if n is None:
-            return " "
-        for i, cut in enumerate(RAMP_CUTS):
-            if n < cut:
-                return RAMP[i]
-        return RAMP[-1]
-
-    # Month labels, placed on the week the month turns over.
-    labels, seen = [], None
-    for w, week in enumerate(weeks):
-        d0 = dt.date.fromisoformat(week["contributionDays"][0]["date"])
-        if d0.month != seen:
-            if seen is not None and w < len(weeks) - 2:
-                labels.append(txt(gutter + w * 2 * cw, 20, f"{d0:%b}".lower(), "m", 8.5))
-            seen = d0.month
-    s.append(faded(0.16, "".join(labels)))
-
-    row_names = {1: "mon", 3: "wed", 5: "fri"}
-    rows = []
-    for r in range(7):
-        y = top_y + r * line_h
-        if r in row_names:
-            s.append(faded(0.20, txt(INSET, y, row_names[r], "m", 8.5)))
-        line = "".join(glyph(v) + " " for v in grid[r])
-        rows.append(wipe(txt(gutter, y, line, "d", size),
-                         gutter, len(weeks) * 2 * cw, 0.30 + 0.07 * r, 0.40))
-    s.append("".join(rows))
-
-    # A legend, so density is never the only thing carrying the meaning.
-    ly = top_y + 7 * line_h + 16
-    ramp = " ".join(RAMP[1:])
-    s.append(faded(1.30,
-                   txt(gutter, ly, "less", "m", 9)
-                   + txt(gutter + 34, ly, ramp, "d", 9)
-                   + txt(gutter + 42 + text_width(ramp, 9), ly, "more", "m", 9)))
-    s.append(TAIL)
-    return "".join(s)
-
-
 def draw_heading(word: str) -> str:
     """A section heading drawn as type plus a rule, not a markdown '##'."""
     H = 28
@@ -506,7 +446,7 @@ def draw_heading(word: str) -> str:
 
 # ---------------------------------------------------------------------------
 
-HEADINGS = ["about", "stack", "stats"]
+HEADINGS = ["about", "stats"]
 
 
 def main() -> None:
@@ -538,7 +478,6 @@ def main() -> None:
     write("stats.svg", draw_stats(total, active, max(weekly, default=0), weekly))
     write("streak.svg", draw_streak(st))
     write("langs.svg", draw_langs(data["by_bytes"], data["by_repos"]))
-    write("year.svg", draw_year(cal))
     for word in HEADINGS:
         write(f"hd-{word}.svg", draw_heading(word))
 
